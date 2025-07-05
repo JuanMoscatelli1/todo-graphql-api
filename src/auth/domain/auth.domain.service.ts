@@ -14,10 +14,10 @@ export class AuthDomainService {
 
     async validateUser(username: string, password: string): Promise<User> {
         const user = await this.userRepository.findByUsername(username);
-        if (!user) throw new UnauthorizedException('Invalid credentials');
+        if (!user) throw new Error('Invalid credentials');
 
         const isPasswordValid = await this.passwordHasher.compare(password, user.password);
-        if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+        if (!isPasswordValid) throw new Error('Invalid credentials');
 
         return user;
     }

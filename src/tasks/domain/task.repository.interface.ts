@@ -1,3 +1,5 @@
+import { TaskFilterInput } from '../presentation/task-filter.input';
+import { TaskOrderInput } from '../presentation/task-order.input';
 import { Task } from './task.entity';
 
 export interface ITaskRepository {
@@ -6,4 +8,9 @@ export interface ITaskRepository {
   findByUser(userId: number): Promise<Task[]>;
   findOne(id: number): Promise<Task | null>;
   delete(id: number): Promise<void>;
+  findWithFilters(
+    filters: Partial<TaskFilterInput>,
+    order: Partial<TaskOrderInput>,
+  ): Promise<Task[]>;
+
 }

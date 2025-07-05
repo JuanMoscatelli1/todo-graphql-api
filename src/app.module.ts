@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { CliModule } from './cli/cli.module';
 import { ConfigModule } from '@nestjs/config';
+import { TaskModule } from './tasks/task.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,12 +28,13 @@ import { ConfigModule } from '@nestjs/config';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: true,
       sortSchema: true,
-      context: ({ req }) => ({ headers: req.headers }), // necesario para auth en context
+      context: ({ req }) => ({ req }),
     }),
     UserModule,
     AuthModule,
-    CliModule
-    // otros módulos
+    CliModule,
+    TaskModule
+    
   ],
   controllers: [],
   providers: [],

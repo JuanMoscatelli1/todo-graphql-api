@@ -6,6 +6,7 @@ import { RolesModule } from 'src/roles/roles.module';
 import { Task } from './domain/task.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/domain/user.entity';
+import { TaskRepository } from './infra/task.repository';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Task, User]), RolesModule],
@@ -13,6 +14,10 @@ import { User } from 'src/user/domain/user.entity';
         TaskDomainService,
         TaskService,
         TaskResolver,
+        {
+            provide: 'ITaskRepository',
+            useClass: TaskRepository,
+        },
     ],
     exports: [],
 })

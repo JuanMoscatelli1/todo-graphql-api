@@ -2,12 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ChangeTaskStatusDTO {
+  action: Transitions!
+  taskId: Float!
+}
+
+input CreateTaskDTO {
+  description: String!
+  title: String!
+}
+
 """Datos necesarios para registrar un usuario"""
 input CreateUserDTO {
   password: String!
   roles: [Role!]!
   username: String!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input LoginInput {
   password: String!
@@ -19,13 +34,25 @@ type LoginResponse {
 }
 
 type Mutation {
+  changeTaskStatus(input: ChangeTaskStatusDTO!): TaskDTO!
+  createTask(input: CreateTaskDTO!): TaskDTO!
+  deleteTask(taskId: Float!): Boolean!
   login(input: LoginInput!): LoginResponse!
 
   """Registra un nuevo usuario con permisos"""
   register(input: CreateUserDTO!): String!
+  updateTask(input: UpdateTaskDTO!): TaskDTO!
+}
+
+enum OrderDirection {
+  ASC
+  DESC
 }
 
 type Query {
+  tasks: [TaskDTO!]!
+  tasksByUser(filter: TaskFilterInput, order: TaskOrderInput): [TaskDTO!]!
+  tasksForAdmin(filter: TaskFilterInput, order: TaskOrderInput): [TaskDTO!]!
   users: [UserDTO!]!
 }
 
@@ -33,6 +60,47 @@ type Query {
 enum Role {
   ADMIN
   USER
+}
+
+type TaskDTO {
+  createdAt: DateTime!
+  description: String!
+  id: Float!
+  status: TaskStatus!
+  title: String!
+}
+
+input TaskFilterInput {
+  description: String
+  status: TaskStatus
+  title: String
+  userId: Float
+}
+
+input TaskOrderInput {
+  createdAt: OrderDirection
+  status: OrderDirection
+  title: OrderDirection
+}
+
+enum TaskStatus {
+  CANCELLED
+  COMPLETED
+  IN_PROGRESS
+  PENDING
+}
+
+enum Transitions {
+  CANCEL
+  COMPLETE
+  RESET
+  START
+}
+
+input UpdateTaskDTO {
+  description: String
+  taskId: Int!
+  title: String
 }
 
 type UserDTO {
