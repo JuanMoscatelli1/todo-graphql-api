@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { User } from '../../user/domain/user.entity';
 import { TaskStatus } from './task-status.enum';
 
@@ -14,7 +14,7 @@ export class Task {
   description: string;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: TaskStatus,
     default: TaskStatus.PENDING,
   })
@@ -23,8 +23,11 @@ export class Task {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  deletedAt: Date | null;
+  @UpdateDateColumn()
+  updatedAt: Date
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @ManyToOne(() => User, user => user.tasks, { eager: false })
   user: User;

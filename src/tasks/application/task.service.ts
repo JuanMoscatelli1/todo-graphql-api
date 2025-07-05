@@ -36,10 +36,6 @@ export class TaskService {
         private readonly taskRepository: ITaskRepository,
         private readonly taskDomainService: TaskDomainService) { }
 
-    async findAll(): Promise<Task[]> {
-        return await this.taskRepository.findAll();
-    }
-
     async createTask(title: string, description: string, userId: number): Promise<Task> {
         const task = this.taskDomainService.createNewTask(title, description, userId);
         return await this.taskRepository.save(task);
@@ -53,8 +49,7 @@ export class TaskService {
 
     async deleteTask(taskId: number, userId: number): Promise<void> {
         const task = await this.taskDomainService.findAndValidateTask(taskId, userId);
-        this.taskDomainService.softDelete(task);
-        await this.taskRepository.save(task);
+        await this.taskDomainService.softDelete(task);
     }
 
     async updateTask(dto: UpdateTaskDTO, userId: number): Promise<Task> {

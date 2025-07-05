@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Task } from '../domain/task.entity';
 import { ITaskRepository } from '../domain/task.repository.interface';
-import { applyDynamicFilters, applyDynamicOrder } from 'src/shared/query-utils';
+import { applyDynamicFilters, applyDynamicOrder } from '../../shared/query-utils';
 
 @Injectable()
 export class TaskRepository implements ITaskRepository {
@@ -12,16 +12,9 @@ export class TaskRepository implements ITaskRepository {
         private readonly repo: Repository<Task>,
     ) { }
 
-    findAll(): Promise<Task[]> {
-        return this.repo.find();
-    }
 
     save(task: Task): Promise<Task> {
         return this.repo.save(task);
-    }
-
-    findByUser(userId: number): Promise<Task[]> {
-        return this.repo.find({ where: { user: { id: userId } }, order: { createdAt: 'DESC' } });
     }
 
     findOne(id: number): Promise<Task | null> {
@@ -30,8 +23,8 @@ export class TaskRepository implements ITaskRepository {
             relations: ['user'],
         });
     }
-    async delete(id: number): Promise<void> {
-        await this.repo.delete(id);
+    async softRemove(task: Task): Promise<Task> {
+        return this.repo.softRemove(task);
     }
 
     async findWithFilters(

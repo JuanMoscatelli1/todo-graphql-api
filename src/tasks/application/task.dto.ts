@@ -7,18 +7,18 @@ registerEnumType(TaskStatus, {
 
 @ObjectType()
 export class TaskDTO {
-  @Field()
+  @Field({ description: 'Id unico de la tarea' })
   id: number;
 
-  @Field()
+  @Field({ description: 'Tíiulo de la tarea' })
   title: string;
 
-  @Field()
+  @Field({ description: 'Descripcion' })
   description: string;
 
-  @Field(() => TaskStatus)
+  @Field({ description: 'Estado actual de la tarea' })
   status: TaskStatus;
 
-  @Field()
+  @Field({ description: 'Fecha de creacion' })
   createdAt: Date;
 }

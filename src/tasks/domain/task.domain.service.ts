@@ -5,7 +5,7 @@ import { TaskStatus } from './task-status.enum';
 import { Transitions } from './task-transitions.enum';
 import { TaskStatusHandler } from '../infra/task-status.handler';
 import { ITaskRepository } from './task.repository.interface';
-import { User } from 'src/user/domain/user.entity';
+import { User } from '../../user/domain/user.entity';
 
 @Injectable()
 export class TaskDomainService {
@@ -39,7 +39,7 @@ export class TaskDomainService {
         task.status = newStatus;
     }
 
-    softDelete(task: Task): void {
-        task.deletedAt = new Date();
+    async softDelete(task: Task): Promise<void> {
+        await this.taskRepository.softRemove(task);
     }
 }

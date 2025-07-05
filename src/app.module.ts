@@ -8,20 +8,36 @@ import { UserModule } from './user/user.module';
 import { CliModule } from './cli/cli.module';
 import { ConfigModule } from '@nestjs/config';
 import { TaskModule } from './tasks/task.module';
+import { Task } from './tasks/domain/task.entity';
+import { User } from './user/domain/user.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'todo_db',
-      autoLoadEntities: true,
-      synchronize: true,      // en dev, auto crea tablas, no usar en prod
+    TypeOrmModule.forRootAsync({
+      useFactory: async () => {
+        const isTest = process.env.NODE_ENV === 'test';
+
+        return isTest
+          ? {
+            type: 'sqlite',
+            database: ':memory:',
+            dropSchema: true,
+            entities: [User, Task],
+            synchronize: true,
+          }
+          : {
+            type: 'postgres',
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT ?? '5432'),
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            entities: [User, Task],
+            synchronize: true, // o false en producción
+          };
+      },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -34,7 +50,7 @@ import { TaskModule } from './tasks/task.module';
     AuthModule,
     CliModule,
     TaskModule
-    
+
   ],
   controllers: [],
   providers: [],

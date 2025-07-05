@@ -34,8 +34,15 @@ type LoginResponse {
 }
 
 type Mutation {
+  """
+  Realiza una accion que cambia el estado de una tarea del usuario autenticado
+  """
   changeTaskStatus(input: ChangeTaskStatusDTO!): TaskDTO!
+
+  """Crea una nueva tarea asociada al usuario autenticado"""
   createTask(input: CreateTaskDTO!): TaskDTO!
+
+  """Marca como borrada a una tarea del usuario autenticado"""
   deleteTask(taskId: Float!): Boolean!
   login(input: LoginInput!): LoginResponse!
 
@@ -50,8 +57,14 @@ enum OrderDirection {
 }
 
 type Query {
-  tasks: [TaskDTO!]!
+  """
+  Obtiene todas las tareas del usuario autenticado con filtros y ordenamiento opcionales
+  """
   tasksByUser(filter: TaskFilterInput, order: TaskOrderInput): [TaskDTO!]!
+
+  """
+  Obtiene todas las tareas de los usuarios con filtros y ordenamiento opcionales
+  """
   tasksForAdmin(filter: TaskFilterInput, order: TaskOrderInput): [TaskDTO!]!
   users: [UserDTO!]!
 }
@@ -63,10 +76,19 @@ enum Role {
 }
 
 type TaskDTO {
+  """Fecha de creacion"""
   createdAt: DateTime!
+
+  """Descripcion"""
   description: String!
+
+  """Id unico de la tarea"""
   id: Float!
-  status: TaskStatus!
+
+  """Estado actual de la tarea"""
+  status: String!
+
+  """Tíiulo de la tarea"""
   title: String!
 }
 

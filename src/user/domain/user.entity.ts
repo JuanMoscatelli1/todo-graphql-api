@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, OneToMany } from 'typeorm';
 import { Role } from '../../roles/domain/roles.enum';
-import { Task } from 'src/tasks/domain/task.entity';
+import { Task } from '../../tasks/domain/task.entity';
+
 
 
 @Entity()
@@ -15,10 +16,9 @@ export class User {
     password: string;
 
     @Column({
-        type: 'enum',
+        type: 'simple-enum',
         enum: Role,
-        array: true,
-        default: [Role.USER],
+        array: true
     })
     roles: Role[];
 
