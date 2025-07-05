@@ -5,7 +5,7 @@
 """Datos necesarios para registrar un usuario"""
 input CreateUserDTO {
   password: String!
-  permissions: [Permission!]!
+  roles: [Role!]!
   username: String!
 }
 
@@ -25,24 +25,18 @@ type Mutation {
   register(input: CreateUserDTO!): String!
 }
 
-"""Permisos disponibles"""
-enum Permission {
-  ADMIN
-  USER
-}
-
-type PermissionDTO {
-  description: String
-  id: Int!
-  name: String!
-}
-
 type Query {
   users: [UserDTO!]!
 }
 
+"""User roles"""
+enum Role {
+  ADMIN
+  USER
+}
+
 type UserDTO {
   id: Int!
-  permissions: [PermissionDTO!]!
+  roles: [Role!]!
   username: String!
 }

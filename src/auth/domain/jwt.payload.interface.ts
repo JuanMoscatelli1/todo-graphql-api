@@ -1,7 +1,7 @@
-import { Permission } from "src/permissions/domain/permission.enum";
+import { Role } from '../../roles/domain/roles.enum';
 
 export interface JwtPayload {
   sub: number;
   username: string;
-  permissions: string[];
+  roles: Role[];
 }

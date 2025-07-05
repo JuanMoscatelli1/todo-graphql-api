@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
-import { Permission } from '../../permissions/domain/permission.entity';
+import { Role } from '../../roles/domain/roles.enum';
+
 
 @Entity()
 export class User {
@@ -12,10 +13,11 @@ export class User {
   @Column()
   password: string;
 
-  @ManyToMany(() => Permission, (permission) => permission.users, {
-    cascade: true,
-    eager: true,
+  @Column({
+    type: 'enum',
+    enum: Role,
+    array: true,
+    default: [Role.USER],
   })
-  @JoinTable()
-  permissions: Permission[];
+  roles: Role[];
 }

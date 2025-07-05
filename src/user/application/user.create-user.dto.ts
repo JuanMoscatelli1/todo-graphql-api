@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { Permission } from '../../permissions/domain/permission.enum';
+import { Role } from '../../roles/domain/roles.enum';
+
 
 @InputType({ description: 'Datos necesarios para registrar un usuario' })
 export class CreateUserDTO {
@@ -9,6 +10,6 @@ export class CreateUserDTO {
   @Field()
   password: string;
 
-  @Field(() => [Permission])
-  permissions: Permission[];
+  @Field(() => [Role])
+  roles: Role[]; 
 }

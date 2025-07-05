@@ -8,12 +8,9 @@ import { AuthModule } from '../auth/auth.module';
 import { UserDomainService } from './domain/user.domain.service';
 import { UserService } from './application/user.service';
 import { UserResolver } from './presentation/user.resolver';
-import { PermissionModule } from 'src/permissions/permission.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User]),
-        forwardRef(() => AuthModule),
-        PermissionModule],
+    imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule),],
     providers: [
         UserService,
         UserDomainService,
