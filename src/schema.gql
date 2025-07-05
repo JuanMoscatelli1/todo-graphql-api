@@ -1,0 +1,42 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Datos necesarios para registrar un usuario"""
+input CreateUserDTO {
+  password: String!
+  permissions: [Permission!]!
+  username: String!
+}
+
+input LoginInput {
+  password: String!
+  username: String!
+}
+
+type LoginResponse {
+  accessToken: String!
+}
+
+type Mutation {
+  login(input: LoginInput!): LoginResponse!
+
+  """Registra un nuevo usuario con permisos"""
+  register(input: CreateUserDTO!): String!
+}
+
+"""Permisos disponibles"""
+enum Permission {
+  ADMIN
+  USER
+}
+
+type Query {
+  users: [UserDTO!]!
+}
+
+type UserDTO {
+  id: Int!
+  permissions: [Permission!]!
+  username: String!
+}
