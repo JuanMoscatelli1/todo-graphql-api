@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/application/user.service';
-import { Permission } from '../user/domain/permission.enum';
+import { Permission } from '../permissions/domain/permission.enum';
 
 
 @Injectable()

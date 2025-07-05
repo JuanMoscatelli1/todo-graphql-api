@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Permission } from '../domain/permission.enum';
+import { PermissionDTO } from 'src/permissions/application/permission.dto';
 
 @ObjectType()
 export class UserDTO {
@@ -9,6 +9,6 @@ export class UserDTO {
     @Field()
     username: string;
 
-    @Field(() => [Permission])
-    permissions: Permission[];
+    @Field(() => [PermissionDTO])
+    permissions: PermissionDTO[];
 }

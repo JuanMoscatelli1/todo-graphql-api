@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Permission } from '../../user/domain/permission.enum';
+import { Permission } from '../domain/permission.enum';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {

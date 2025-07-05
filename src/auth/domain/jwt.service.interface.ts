@@ -1,5 +1,6 @@
-export interface IJwtService {
-  sign(payload: any): string;
-  verify(token: string): any;
-}
+import { JwtPayload } from "./jwt.payload.interface";
 
+export interface IJwtService {
+  sign(payload: JwtPayload): string;
+  verify(token: string): JwtPayload;
+}

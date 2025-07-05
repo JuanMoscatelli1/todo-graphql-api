@@ -31,12 +31,18 @@ enum Permission {
   USER
 }
 
+type PermissionDTO {
+  description: String
+  id: Int!
+  name: String!
+}
+
 type Query {
   users: [UserDTO!]!
 }
 
 type UserDTO {
   id: Int!
-  permissions: [Permission!]!
+  permissions: [PermissionDTO!]!
   username: String!
 }

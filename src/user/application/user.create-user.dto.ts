@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { Permission } from '../domain/permission.enum';
+import { Permission } from '../../permissions/domain/permission.enum';
 
 @InputType({ description: 'Datos necesarios para registrar un usuario' })
 export class CreateUserDTO {
