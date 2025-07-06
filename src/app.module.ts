@@ -43,6 +43,7 @@ import { User } from './user/domain/user.entity';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: true,
       sortSchema: true,
+      introspection: true,
       context: ({ req }) => ({ req }),
     }),
     UserModule,
