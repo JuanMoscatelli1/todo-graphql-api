@@ -4,6 +4,8 @@ import { IsNull, Repository } from 'typeorm';
 import { Task } from '../domain/task.entity';
 import { ITaskRepository } from '../domain/task.repository.interface';
 import { applyDynamicFilters, applyDynamicOrder } from '../../shared/query-utils';
+import { TaskFilterInput } from '../presentation/task-filter.input';
+import { TaskOrderInput } from '../presentation/task-order.input';
 
 @Injectable()
 export class TaskRepository implements ITaskRepository {
@@ -23,13 +25,14 @@ export class TaskRepository implements ITaskRepository {
             relations: ['user'],
         });
     }
+    
     async softRemove(task: Task): Promise<Task> {
         return this.repo.softRemove(task);
     }
 
     async findWithFilters(
-        filters: Record<string, any> = {},
-        order: Record<string, 'ASC' | 'DESC'> = {}
+        filters: Partial<TaskFilterInput> = {},
+        order: Partial<TaskOrderInput> = {}
     ): Promise<Task[]> {
         const query = this.repo.createQueryBuilder('task')
             .leftJoinAndSelect('task.user', 'user')
@@ -37,7 +40,7 @@ export class TaskRepository implements ITaskRepository {
 
         applyDynamicFilters(query, 'task', filters);
         applyDynamicOrder(query, 'task', order);
-        
+
         return await query.getMany();
     }
 }

@@ -1,9 +1,11 @@
+import { TaskFilterInput } from 'src/tasks/presentation/task-filter.input';
+import { TaskOrderInput } from 'src/tasks/presentation/task-order.input';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 export function applyDynamicFilters<T extends ObjectLiteral>(
   query: SelectQueryBuilder<T>,
   alias: string,
-  filters: Record<string, any>
+  filters: Partial<TaskFilterInput>
 ): void {
   for (const [field, value] of Object.entries(filters || {})) {
     if (value !== undefined && value !== null) {
@@ -15,7 +17,7 @@ export function applyDynamicFilters<T extends ObjectLiteral>(
 export function applyDynamicOrder<T extends ObjectLiteral>(
   query: SelectQueryBuilder<T>,
   alias: string,
-  order: Record<string, 'ASC' | 'DESC'>
+  order: Partial<TaskOrderInput>
 ): void {
   for (const [field, direction] of Object.entries(order || {})) {
     if (direction) {
