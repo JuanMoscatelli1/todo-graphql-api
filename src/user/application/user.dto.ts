@@ -1,10 +1,10 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Role } from '../../roles/domain/roles.enum';
 
 
 @ObjectType()
 export class UserDTO {
-    @Field(() => Int)
+    @Field(() => ID)
     id: number;
 
     @Field()

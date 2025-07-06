@@ -1,4 +1,4 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
+import { ObjectType, Field, registerEnumType, ID } from '@nestjs/graphql';
 import { TaskStatus } from '../domain/task-status.enum';
 import { UserPublicDTO } from '../../user/application/user-public.dto';
 
@@ -8,7 +8,7 @@ registerEnumType(TaskStatus, {
 
 @ObjectType()
 export class TaskDTO {
-  @Field({ description: 'Id unico de la tarea' })
+  @Field(() => ID, { description: 'Id unico de la tarea' })
   id: number;
 
   @Field({ description: 'Tíiulo de la tarea' })
