@@ -1,50 +1,62 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Transitions } from '../domain/task-transitions.enum';
 import { TaskDomainService } from '../domain/task.domain.service';
-import { Task } from '../domain/task.entity';
 import { ITaskRepository } from '../domain/task.repository.interface';
 import { UpdateTaskDTO } from './update-task.dto';
 import { TaskMapper } from './task-mapper';
 import { TaskFilterInput } from '../presentation/task-filter.input';
 import { TaskOrderInput } from '../presentation/task-order.input';
+import { TaskDTO } from './task.dto';
+import { IUserRepository } from '../../user/domain/user.repository.interface';
 
 @Injectable()
 export class TaskService {
+
+    constructor(
+        @Inject('ITaskRepository')
+        private readonly taskRepository: ITaskRepository,
+        private readonly taskDomainService: TaskDomainService,
+        @Inject('IUserRepository')
+        private readonly userRepository: IUserRepository) { }
 
     async findFilteredTasks(
         userId: number,
         filters: Partial<TaskFilterInput>,
         order: Partial<TaskOrderInput>
-    ): Promise<Task[]> {
+    ): Promise<TaskDTO[]> {
         //sobreescribe el filter de user con el suyo
         const completeFilters: Partial<TaskFilterInput> = {
             ...filters,
             userId,
         };
-        return this.taskRepository.findWithFilters(completeFilters, order);
+        const tasks = await this.taskRepository.findWithFilters(completeFilters, order);
+        return tasks.map(task => TaskMapper.toDTO(task));
     }
 
     async findAllTasksForAdmin(
         filters: Partial<TaskFilterInput>,
         order: Partial<TaskOrderInput>
-    ): Promise<Task[]> {
-        return this.taskRepository.findWithFilters(filters, order);
+    ): Promise<TaskDTO[]> {
+        const tasks = await this.taskRepository.findWithFilters(filters, order);
+        return tasks.map(task => TaskMapper.toDTO(task));
     }
 
-    constructor(
-        @Inject('ITaskRepository')
-        private readonly taskRepository: ITaskRepository,
-        private readonly taskDomainService: TaskDomainService) { }
 
-    async createTask(title: string, description: string, userId: number): Promise<Task> {
-        const task = this.taskDomainService.createNewTask(title, description, userId);
-        return await this.taskRepository.save(task);
+    async createTask(title: string, description: string, userId: number): Promise<TaskDTO> {
+        const user = await this.userRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        const task = this.taskDomainService.createNewTask(title, description, user);
+        const savedTask = await this.taskRepository.save(task);
+        return TaskMapper.toDTO(savedTask);
     }
 
-    async changeTaskStatusById(taskId: number, action: Transitions, userId: number): Promise<Task> {
+    async changeTaskStatusById(taskId: number, action: Transitions, userId: number): Promise<TaskDTO> {
         const task = await this.taskDomainService.findAndValidateTask(taskId, userId);
         this.taskDomainService.changeStatus(task, action);
-        return await this.taskRepository.save(task);
+        const savedTask = await this.taskRepository.save(task);
+        return TaskMapper.toDTO(savedTask);
     }
 
     async deleteTask(taskId: number, userId: number): Promise<void> {
@@ -52,14 +64,11 @@ export class TaskService {
         await this.taskDomainService.softDelete(task);
     }
 
-    async updateTask(dto: UpdateTaskDTO, userId: number): Promise<Task> {
+    async updateTask(dto: UpdateTaskDTO, userId: number): Promise<TaskDTO> {
         const task = await this.taskDomainService.findAndValidateTask(dto.taskId, userId);
-
         TaskMapper.updateEntityFromDto(task, dto);
-
-        return await this.taskRepository.save(task);
+        const savedTask = await this.taskRepository.save(task);
+        return TaskMapper.toDTO(savedTask);
     }
-
-
 
 }

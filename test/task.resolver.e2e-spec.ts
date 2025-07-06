@@ -149,16 +149,16 @@ describe('TaskResolver (e2e)', () => {
 
         it('should change task status', async () => {
             const res = await graphqlRequest(app, `
-            mutation {
-                changeTaskStatus(input: {
-                    taskId: ${taskId}
-                    action: START
-                }) {
-                    id
-                    status
+                mutation {
+                    changeTaskStatus(input: {
+                        taskId: ${taskId}
+                        action: START
+                    }) {
+                        id
+                        status
+                    }
                 }
-            }
-        `, userToken);
+            `, userToken);
 
             expect(res.body.data.changeTaskStatus.status).toBe(TaskStatus.IN_PROGRESS);
         });
@@ -167,15 +167,42 @@ describe('TaskResolver (e2e)', () => {
         it('should allow admin to see all tasks', async () => {
             const res = await graphqlRequest(app,
                 `query {
-                tasksForAdmin {
-                    id
-                    title
-                    status
-                }
-            }`
-                , adminToken);
+                    tasksForAdmin {
+                        id
+                        title
+                        status
+                    }
+                }`, adminToken);
 
             expect(res.body.data.tasksForAdmin.length).toBeGreaterThan(0);
+        });
+
+        it('should include all expected fields in task', async () => {
+            const res = await graphqlRequest(app, `
+                query {
+                    tasksByUser {
+                        id
+                        title
+                        description
+                        status
+                        createdAt
+                        user {
+                            id
+                            username
+                        }
+                    }
+                }
+            `, userToken);
+
+            const task = res.body.data.tasksByUser[0];
+            expect(task).toHaveProperty('id');
+            expect(task).toHaveProperty('title');
+            expect(task).toHaveProperty('description');
+            expect(task).toHaveProperty('status');
+            expect(task).toHaveProperty('createdAt');
+            expect(task).toHaveProperty('user');
+            expect(task.user).toHaveProperty('username');
+            expect(task.user).not.toHaveProperty('roles');
         });
 
         it('should delete task', async () => {
@@ -226,7 +253,7 @@ describe('TaskResolver (e2e)', () => {
                 }
             `, otherUserToken);
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toMatch(/not authorized|no autorizado/i);
+            expect(res.body.errors[0].message).toMatch(/no autorizado/i);
         });
 
         it('shouldnt update task from another user', async () => {
@@ -242,7 +269,7 @@ describe('TaskResolver (e2e)', () => {
                 }
             `, otherUserToken);
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toMatch(/not authorized|no autorizado/i);
+            expect(res.body.errors[0].message).toMatch(/no autorizado/i);
         });
 
         it('shouldnt change task status from another user', async () => {
@@ -257,7 +284,7 @@ describe('TaskResolver (e2e)', () => {
                 }
             `, otherUserToken);
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toMatch(/not authorized|no autorizado/i);
+            expect(res.body.errors[0].message).toMatch(/no autorizado/i);
         });
 
         it('shouldnt create task without login', async () => {

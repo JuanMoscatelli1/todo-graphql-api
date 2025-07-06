@@ -1,5 +1,6 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { TaskStatus } from '../domain/task-status.enum';
+import { UserPublicDTO } from '../../user/application/user-public.dto';
 
 registerEnumType(TaskStatus, {
   name: 'TaskStatus',
@@ -21,4 +22,7 @@ export class TaskDTO {
 
   @Field({ description: 'Fecha de creacion' })
   createdAt: Date;
+
+  @Field(() => UserPublicDTO, { description: 'Usuario creador de la tarea' })
+  user: UserPublicDTO;
 }
