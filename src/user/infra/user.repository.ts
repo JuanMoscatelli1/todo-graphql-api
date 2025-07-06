@@ -22,4 +22,8 @@ export class UserRepository implements IUserRepository {
     async findAll(): Promise<User[]> {
         return this.repo.find();
     }
+
+    async findById(id: number): Promise<User | null> {
+        return this.repo.findOne({ where: { id }});
+    }
 }

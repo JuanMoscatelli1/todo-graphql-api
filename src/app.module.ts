@@ -41,9 +41,10 @@ import { User } from './user/domain/user.entity';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: true,
+      playground: false,
       sortSchema: true,
       introspection: true,
+      csrfPrevention: true,
       context: ({ req }) => ({ req }),
     }),
     UserModule,

@@ -90,6 +90,9 @@ type TaskDTO {
 
   """Tíiulo de la tarea"""
   title: String!
+
+  """Usuario creador de la tarea"""
+  user: UserPublicDTO!
 }
 
 input TaskFilterInput {
@@ -128,5 +131,10 @@ input UpdateTaskDTO {
 type UserDTO {
   id: Int!
   roles: [Role!]!
+  username: String!
+}
+
+type UserPublicDTO {
+  id: Int!
   username: String!
 }

@@ -21,11 +21,8 @@ export class TaskDomainService {
         return task;
     }
 
-    createNewTask(title: string, description: string, userId: number): Task {
+    createNewTask(title: string, description: string, user: User): Task {
         const task = new Task();
-        const user = new User();
-        user.id = userId;
-
         task.user = user;;
         task.title = title;
         task.description = description;

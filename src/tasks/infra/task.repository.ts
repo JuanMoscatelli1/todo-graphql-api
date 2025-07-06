@@ -32,11 +32,12 @@ export class TaskRepository implements ITaskRepository {
         order: Record<string, 'ASC' | 'DESC'> = {}
     ): Promise<Task[]> {
         const query = this.repo.createQueryBuilder('task')
+            .leftJoinAndSelect('task.user', 'user')
             .where('task.deletedAt IS NULL');
 
         applyDynamicFilters(query, 'task', filters);
         applyDynamicOrder(query, 'task', order);
-
+        
         return await query.getMany();
     }
 }

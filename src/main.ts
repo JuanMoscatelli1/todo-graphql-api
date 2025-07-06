@@ -4,7 +4,7 @@ import { UserService } from './user/application/user.service';
 import { Role } from './roles/domain/roles.enum';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   const userService = app.get(UserService);
 
 
