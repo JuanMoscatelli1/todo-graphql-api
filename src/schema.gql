@@ -4,7 +4,7 @@
 
 input ChangeTaskStatusDTO {
   action: Transitions!
-  taskId: Float!
+  taskId: ID!
 }
 
 input CreateTaskDTO {
@@ -43,7 +43,7 @@ type Mutation {
   createTask(input: CreateTaskDTO!): TaskDTO!
 
   """Marca como borrada a una tarea del usuario autenticado"""
-  deleteTask(taskId: Float!): Boolean!
+  deleteTask(taskId: ID!): Boolean!
   login(input: LoginInput!): LoginResponse!
 
   """Registra un nuevo usuario con permisos"""
@@ -83,7 +83,7 @@ type TaskDTO {
   description: String!
 
   """Id unico de la tarea"""
-  id: Float!
+  id: ID!
 
   """Estado actual de la tarea"""
   status: String!
@@ -99,7 +99,7 @@ input TaskFilterInput {
   description: String
   status: TaskStatus
   title: String
-  userId: Float
+  userId: ID
 }
 
 input TaskOrderInput {
@@ -124,17 +124,17 @@ enum Transitions {
 
 input UpdateTaskDTO {
   description: String
-  taskId: Int!
+  taskId: ID!
   title: String
 }
 
 type UserDTO {
-  id: Int!
+  id: ID!
   roles: [Role!]!
   username: String!
 }
 
 type UserPublicDTO {
-  id: Int!
+  id: ID!
   username: String!
 }

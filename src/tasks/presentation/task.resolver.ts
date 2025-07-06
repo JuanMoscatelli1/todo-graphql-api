@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
 import { ChangeTaskStatusDTO } from '../application/change-task-status.dto';
 import { CreateTaskDTO } from '../application/create-task.dto';
 import { TaskDTO } from '../application/task.dto';
@@ -71,7 +71,7 @@ export class TaskResolver {
         { description: 'Marca como borrada a una tarea del usuario autenticado' })
     @UseGuards(GqlAuthGuard, RolesGuard)
     @Roles(Role.USER)
-    async deleteTask(@Args('taskId') taskId: number, @Context() context: GqlContext): Promise<boolean> {
+    async deleteTask(@Args('taskId', { type: () => ID }) taskId: number, @Context() context: GqlContext): Promise<boolean> {
         const userId = context.req.user.userId;
         await this.taskService.deleteTask(taskId, userId);
         return true;

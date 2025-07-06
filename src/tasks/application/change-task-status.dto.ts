@@ -1,4 +1,4 @@
-import { InputType, Field, registerEnumType } from '@nestjs/graphql';
+import { InputType, Field, registerEnumType, ID } from '@nestjs/graphql';
 import { Transitions } from '../domain/task-transitions.enum';
 
 
@@ -8,7 +8,7 @@ registerEnumType(Transitions, {
 
 @InputType()
 export class ChangeTaskStatusDTO {
-  @Field()
+  @Field(() => ID)
   taskId: number;
 
   @Field(() => Transitions)

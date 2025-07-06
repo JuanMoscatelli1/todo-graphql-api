@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, ID } from '@nestjs/graphql';
 import { TaskStatus } from '../domain/task-status.enum';
 
 @InputType()
@@ -12,6 +12,6 @@ export class TaskFilterInput {
   @Field(() => TaskStatus, { nullable: true })
   status?: TaskStatus;
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   userId?: number;
 }
