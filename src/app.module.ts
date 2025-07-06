@@ -5,7 +5,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { CliModule } from './cli/cli.module';
 import { ConfigModule } from '@nestjs/config';
 import { TaskModule } from './tasks/task.module';
 import { Task } from './tasks/domain/task.entity';
@@ -48,7 +47,6 @@ import { User } from './user/domain/user.entity';
     }),
     UserModule,
     AuthModule,
-    CliModule,
     TaskModule
 
   ],

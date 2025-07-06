@@ -22,6 +22,9 @@ export class UserService {
     return 'User created';
   }
 
+  async findByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findByUsername(username);  
+  }
 
   async findAll(): Promise<UserDTO[]> {
     const users = await this.userRepository.findAll();
