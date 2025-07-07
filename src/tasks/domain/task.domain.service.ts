@@ -13,15 +13,19 @@ export class TaskDomainService {
         @Inject('ITaskRepository')
         private readonly taskRepository: ITaskRepository) { }
 
-    async findAndValidateTask(taskId: number, userId: number): Promise<Task> {
-        //tira error por lo del null sino chequeo todo junto
-        const task = await this.taskRepository.findOne(taskId);
-        if (!task) throw new Error('Task not found');
+    validateTaskOwnership(task: Task, userId: number): void {
         if (task.user?.id !== userId) throw new Error('No autorizado');
-        return task;
     }
 
     createNewTask(title: string, description: string, user: User): Task {
+        if (!title || title.trim() === '') {
+            throw new Error('El titulo es obligatorio');
+        }
+
+        if (!description || description.trim() === '') {
+            throw new Error('La descripcion es obligatoria');
+        }
+
         const task = new Task();
         task.user = user;;
         task.title = title;

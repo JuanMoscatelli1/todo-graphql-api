@@ -8,6 +8,7 @@ import { TaskFilterInput } from '../presentation/task-filter.input';
 import { TaskOrderInput } from '../presentation/task-order.input';
 import { TaskDTO } from './task.dto';
 import { IUserRepository } from '../../user/domain/user.repository.interface';
+import { Task } from '../domain/task.entity';
 
 @Injectable()
 export class TaskService {
@@ -41,6 +42,11 @@ export class TaskService {
         return tasks.map(task => TaskMapper.toDTO(task));
     }
 
+    private async findTaskById(taskId: number): Promise<Task> {
+        const task = await this.taskRepository.findOne(taskId);
+        if (!task) throw new Error('Task not found');
+        return task;
+    }
 
     async createTask(title: string, description: string, userId: number): Promise<TaskDTO> {
         const user = await this.userRepository.findById(userId);
@@ -53,19 +59,22 @@ export class TaskService {
     }
 
     async changeTaskStatusById(taskId: number, action: Transitions, userId: number): Promise<TaskDTO> {
-        const task = await this.taskDomainService.findAndValidateTask(taskId, userId);
+        const task = await this.findTaskById(taskId);
+        this.taskDomainService.validateTaskOwnership(task, userId);
         this.taskDomainService.changeStatus(task, action);
         const savedTask = await this.taskRepository.save(task);
         return TaskMapper.toDTO(savedTask);
     }
 
     async deleteTask(taskId: number, userId: number): Promise<void> {
-        const task = await this.taskDomainService.findAndValidateTask(taskId, userId);
+        const task = await this.findTaskById(taskId);
+        this.taskDomainService.validateTaskOwnership(task, userId);
         await this.taskDomainService.softDelete(task);
     }
 
     async updateTask(dto: UpdateTaskDTO, userId: number): Promise<TaskDTO> {
-        const task = await this.taskDomainService.findAndValidateTask(dto.taskId, userId);
+        const task = await this.findTaskById(dto.taskId);
+        this.taskDomainService.validateTaskOwnership(task, userId);
         TaskMapper.updateEntityFromDto(task, dto);
         const savedTask = await this.taskRepository.save(task);
         return TaskMapper.toDTO(savedTask);

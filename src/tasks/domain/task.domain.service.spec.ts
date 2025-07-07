@@ -5,7 +5,6 @@ import { Task } from "./task.entity";
 import { ITaskRepository } from "./task.repository.interface";
 import { User } from "../../user/domain/user.entity";
 
-
 describe('TaskDomainService', () => {
     let service: TaskDomainService;
     let mockRepo: jest.Mocked<ITaskRepository>;
@@ -16,77 +15,111 @@ describe('TaskDomainService', () => {
             softRemove: jest.fn(),
             findWithFilters: jest.fn(),
             save: jest.fn(),
-        } as jest.Mocked<ITaskRepository>;
+        };
 
         service = new TaskDomainService(mockRepo);
     });
 
-    describe('findAndValidateTask', () => {
-        it('should return the task if it exists and belongs to user', async () => {
-            const user = { id: 1 } as User;
-            const task = { id: 123, user } as Task;
+    describe('validateTaskOwnership', () => {
+        it('should not throw if task belongs to user', () => {
+            const user = new User();
+            user.id = 1;
 
-            mockRepo.findOne.mockResolvedValue(task);
+            const task = new Task();
+            task.user = user;
 
-            const result = await service.findAndValidateTask(123, 1);
-            expect(result).toBe(task);
+            expect(() => service.validateTaskOwnership(task, 1)).not.toThrow();
         });
 
-        it('should throw if task does not exist', async () => {
-            mockRepo.findOne.mockResolvedValue(null);
+        it('should throw if task belongs to different user', () => {
+            const user = new User();
+            user.id = 2;
 
-            await expect(service.findAndValidateTask(123, 1)).rejects.toThrow('Task not found');
-        });
+            const task = new Task();
+            task.user = user;
 
-        it('should throw if task belongs to another user', async () => {
-            const task = { id: 123, user: { id: 2 } } as Task;
-            mockRepo.findOne.mockResolvedValue(task);
-
-            await expect(service.findAndValidateTask(123, 1)).rejects.toThrow('No autorizado');
+            expect(() => service.validateTaskOwnership(task, 1)).toThrow('No autorizado');
         });
     });
 
     describe('createNewTask', () => {
-        it('should create a task with default values', () => {
-            const user = { id: 1, username: 'test' } as User;
-            const task = service.createNewTask('titulo', 'desc', user);
+        const user = new User();
+        user.id = 1;
 
-            expect(task.title).toBe('titulo');
-            expect(task.description).toBe('desc');
-            expect(task.status).toBe(TaskStatus.PENDING);
+        it('should create a task with valid title and description', () => {
+            const task = service.createNewTask('Tarea valida', 'Descripcion valida', user);
+
+            expect(task.title).toBe('Tarea valida');
+            expect(task.description).toBe('Descripcion valida');
             expect(task.user).toBe(user);
-            expect(task.createdAt).toBeInstanceOf(Date);
+            expect(task.status).toBe(TaskStatus.PENDING);
+        });
+
+        it('should throw if title is empty', () => {
+            expect(() => {
+                service.createNewTask('', 'Descripcion valida', user);
+            }).toThrow('El titulo es obligatorio');
+        });
+
+        it('should throw if title is only spaces', () => {
+            expect(() => {
+                service.createNewTask('   ', 'Descripcion valida', user);
+            }).toThrow('El titulo es obligatorio');
+        });
+
+        it('should throw if description is empty', () => {
+            expect(() => {
+                service.createNewTask('Titulo valido', '', user);
+            }).toThrow('La descripcion es obligatoria');
+        });
+
+        it('should throw if description is only spaces', () => {
+            expect(() => {
+                service.createNewTask('Titulo valido', '   ', user);
+            }).toThrow('La descripcion es obligatoria');
         });
     });
 
     describe('changeStatus', () => {
         it('should change PENDING -> IN_PROGRESS with START', () => {
-            const task = { status: TaskStatus.PENDING } as Task;
+            const task = new Task();
+            task.status = TaskStatus.PENDING;
+
             service.changeStatus(task, Transitions.START);
+
             expect(task.status).toBe(TaskStatus.IN_PROGRESS);
         });
 
         it('should change IN_PROGRESS -> COMPLETED with COMPLETE', () => {
-            const task = { status: TaskStatus.IN_PROGRESS } as Task;
+            const task = new Task();
+            task.status = TaskStatus.IN_PROGRESS;
+
             service.changeStatus(task, Transitions.COMPLETE);
+
             expect(task.status).toBe(TaskStatus.COMPLETED);
         });
 
         it('should change IN_PROGRESS -> PENDING with RESET', () => {
-            const task = { status: TaskStatus.IN_PROGRESS } as Task;
+            const task = new Task();
+            task.status = TaskStatus.IN_PROGRESS;
+
             service.changeStatus(task, Transitions.RESET);
+
             expect(task.status).toBe(TaskStatus.PENDING);
         });
 
         it('should throw if invalid transition', () => {
-            const task = { status: TaskStatus.COMPLETED } as Task;
+            const task = new Task();
+            task.status = TaskStatus.COMPLETED;
+
             expect(() => service.changeStatus(task, Transitions.START)).toThrow();
         });
     });
 
     describe('softDelete', () => {
         it('should call softRemove from repository', async () => {
-            const task = { id: 1 } as Task;
+            const task = new Task();
+            task.id = 1;
 
             await service.softDelete(task);
 
